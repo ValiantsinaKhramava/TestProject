@@ -1,22 +1,19 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace TestProject.Core
 {
     public class Configuration
     {
-        public static string BrowserType = GetAppSettingsValue("BrowserType", "Chrome");
-        public static string AppUrl = GetAppSettingsValue("ApplicationUrl", string.Empty);
-        public static string TestDataPath = GetAppSettingsValue("TestDataPath", string.Empty);
-
-        public static string GetAppSettingsValue(string value, string defaultValue)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            IConfigurationRoot configuration = builder.Build();
-
-            return configuration[$"AppSettings:{value}"] ?? defaultValue;
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureServices((context, services) =>
+            {
+                services.Configure<AppSettings>(context.Configuration.GetSection("AppSettings"));
+                services.AddSingleton<AppSettings>(sp =>
+                    sp.GetRequiredService<IOptions<AppSettings>>().Value);
+            });
     }
 }

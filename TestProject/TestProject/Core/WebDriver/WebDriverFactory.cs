@@ -17,6 +17,7 @@ namespace TestProject.WebDriver
                         ChromeOptions options = new ChromeOptions();
                         options.AddArgument("disable-infobars");
                         options.AddArgument("--incognito");
+                        options.AddArgument("--headless");
                         return new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
                     }
                 case BrowserType.Edge:
