@@ -4,38 +4,29 @@ namespace TestProject.Core
 {
     public class Configuration
     {
-        public static string BrowserType = GetAppSettingsValue("BrowserType", "Chrome");
-        public static string AppUrl = GetAppSettingsValue("ApplicationUrl", string.Empty);
-        public static string TestDataPath = GetAppSettingsValue("TestDataPath", string.Empty);
-        public static bool Headless = GetAppSettingsBoolValue("Headless", false);
+        public static string BrowserType { get; private set; }
+        public static string AppUrl { get; private set; }
+        public static string TestDataPath { get; private set; }
+        public static bool Headless { get; private set; }
 
-        public static string GetAppSettingsValue(string value, string defaultValue)
+        static Configuration()
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            IConfigurationRoot configuration = builder.Build();
-
-            return configuration[$"{value}"] ?? defaultValue;
+            Init();
         }
 
-        private static bool GetAppSettingsBoolValue(string value, bool defaultValue)
+        public static void Init()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            var configuration = builder.Build();
 
-            IConfigurationRoot configuration = builder.Build();
+            BrowserType = configuration["BrowserType"] ?? "Chrome";
+            AppUrl = configuration["ApplicationUrl"] ?? string.Empty;
+            TestDataPath = configuration["TestDataPath"] ?? string.Empty;
 
-            string? configValue = configuration[$"{value}"];
-
-            if (bool.TryParse(configValue, out bool result))
-            {
-                return result;
-            }
-
-            return defaultValue;
+            string headless = configuration["Headless"] ?? "False";
+            Headless = bool.TryParse(headless, out bool result) ? result : false;
         }
     }
 }
