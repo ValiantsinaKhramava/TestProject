@@ -20,7 +20,7 @@ namespace TestProject.TestsUI
             WebDriverWrapper.StartBrowser();
             WebDriverWrapper.NavigateTo(Configuration.AppUrl);
 
-            Logger = Logger ?? new Logger();
+            Logger ??= new Logger();
         }
 
         [TearDown]

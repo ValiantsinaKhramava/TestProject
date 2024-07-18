@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
+using TestProject.Core;
 
 namespace TestProject.WebDriver
 {
@@ -14,9 +15,17 @@ namespace TestProject.WebDriver
                 case BrowserType.Chrome:
                     {
                         var service = ChromeDriverService.CreateDefaultService();
-                        ChromeOptions options = new ChromeOptions();
+                        ChromeOptions options = new();
+                        options.AddArgument("--no-sandbox");
                         options.AddArgument("disable-infobars");
                         options.AddArgument("--incognito");
+                        options.AddArgument("--disable-dev-shm-usage");
+
+                        // Add headless run option
+                        if (Configuration.Headless)
+                        {
+                            options.AddArgument("--headless");
+                        }
                         return new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
                     }
                 case BrowserType.Edge:
@@ -28,6 +37,7 @@ namespace TestProject.WebDriver
             }
         }
     }
+
     public enum BrowserType
     {
         Chrome,
